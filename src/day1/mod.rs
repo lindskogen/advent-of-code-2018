@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 pub fn solve1(numbers: &Vec<i32>) -> i32 {
-    return numbers.iter().sum::<i32>();
+    numbers.iter().sum()
 }
 
 pub fn solve2(numbers: &Vec<i32>) -> i32 {
