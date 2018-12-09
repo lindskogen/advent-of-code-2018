@@ -1,8 +1,8 @@
 use itertools::Itertools;
 use std::collections::HashSet;
 
-pub fn solve1(string: &str) -> usize {
-    react(string).len()
+pub fn solve1(string: &str) -> String {
+    react(string)
 }
 
 fn react_tuple(c1: char, c2: char) -> bool {
@@ -47,11 +47,12 @@ fn remove_char_from_string(ch: char, string: &str) -> String {
 }
 
 pub fn solve2(string: &str) -> usize {
+    let reacted_input = solve1(string);
     let polymers = unique_chars(string);
 
     polymers
         .chars()
-        .map(|c| solve1(&remove_char_from_string(c, string)))
+        .map(|c| solve1(&remove_char_from_string(c, &reacted_input)).len())
         .min()
         .unwrap()
 }
@@ -107,13 +108,13 @@ mod tests {
 
     #[test]
     fn it_counts_the_chars_in_a_larger_string() {
-        assert_eq!(solve1("dabAcCaCBAcCcaDA"), 10)
+        assert_eq!(solve1("dabAcCaCBAcCcaDA").len(), 10)
     }
 
     #[test]
     fn it_works_on_the_input() {
         let string = read_file_to_string("./src/day5/input");
-        assert_eq!(solve1(&string), 10762)
+        assert_eq!(solve1(&string).len(), 10762)
     }
 
     #[test]
