@@ -15,6 +15,6 @@ pub fn map_lines_to_strings(path: &str) -> Vec<String> {
 pub fn read_file_to_string(path: &str) -> String {
     let mut file = File::open(path).unwrap();
     let mut result_string = String::new();
-    file.read_to_string(&mut result_string);
+    file.read_to_string(&mut result_string).expect("Failed to read file");
     result_string
 }

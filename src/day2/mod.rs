@@ -54,7 +54,7 @@ fn common_chars(str1: &str, str2: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::*;
+    use crate::common::*;
 
     #[test]
     fn it_returns_a_boolean_tuple() {

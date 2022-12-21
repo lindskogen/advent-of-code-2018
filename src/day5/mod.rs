@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::collections::HashSet;
+
 
 pub fn solve1(string: &str) -> String {
     react(string)
@@ -13,7 +13,7 @@ fn react(string: &str) -> String {
     let mut index = 0usize;
     let mut chars: Vec<_> = string.chars().collect();
 
-    while chars.len() != 0 && index < chars.len() - 1 {
+    while !chars.is_empty() && index < chars.len() - 1 {
         let should_remove = react_tuple(chars[index], chars[index + 1]);
 
         if should_remove {
@@ -60,31 +60,31 @@ pub fn solve2(string: &str) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::*;
+    use crate::common::*;
 
     #[test]
     fn it_eliminates_two_equal_elements_with_different_polarity() {
-        assert_eq!(react_tuple('a', 'A'), true)
+        assert!(react_tuple('a', 'A'))
     }
 
     #[test]
     fn it_keeps_two_equal_elements_with_same_polarity() {
-        assert_eq!(react_tuple('A', 'A'), false)
+        assert!(!react_tuple('A', 'A'))
     }
 
     #[test]
     fn it_eliminates_two_equal_elements_in_one_order() {
-        assert_eq!(react_tuple('a', 'A'), true)
+        assert!(react_tuple('a', 'A'))
     }
 
     #[test]
     fn it_eliminates_two_equal_elements_in_another_order() {
-        assert_eq!(react_tuple('A', 'a'), true)
+        assert!(react_tuple('A', 'a'))
     }
 
     #[test]
     fn it_keeps_two_unequal_elements() {
-        assert_eq!(react_tuple('a', 'b'), false)
+        assert!(!react_tuple('a', 'b'))
     }
 
     #[test]

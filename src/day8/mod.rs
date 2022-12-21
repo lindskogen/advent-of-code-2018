@@ -1,9 +1,8 @@
 use std::collections::VecDeque;
-use std::str::FromStr;
 
-#[derive(Debug)]
+
 enum Tree<T> {
-    Node(Box<Vec<T>>, Box<Vec<Tree<T>>>),
+    Node(Vec<T>, Vec<Tree<T>>),
 }
 
 pub fn solve1(input: &str) -> i32 {
@@ -19,7 +18,7 @@ pub fn solve2(input: &str) -> i32 {
 fn sum_tree(tree: &Tree<i32>) -> i32 {
     let Tree::Node(data, children) = tree;
 
-    let sum: i32 = data.iter().map(|x| *x).sum();
+    let sum: i32 = data.iter().sum();
     let child_sum: i32 = children.iter().map(sum_tree).sum();
 
     sum + child_sum
@@ -29,7 +28,7 @@ fn sum_tree_by_reference(tree: &Tree<i32>) -> i32 {
     let Tree::Node(data, children) = tree;
 
     if children.is_empty() {
-        data.iter().map(|x| *x).sum()
+        data.iter().sum()
     } else {
         data.iter()
             .map(|&i| children.get((i - 1) as usize).map(sum_tree_by_reference).unwrap_or(0))
@@ -40,10 +39,10 @@ fn sum_tree_by_reference(tree: &Tree<i32>) -> i32 {
 fn parse_line(input: &str) -> Tree<i32> {
     let mut numbers: VecDeque<i32> = input
         .split_whitespace()
-        .map(|s| i32::from_str(s).unwrap())
+        .map(|s| s.parse().unwrap())
         .collect();
 
-    return parse_node(&mut numbers);
+    parse_node(&mut numbers)
 }
 
 fn parse_node(numbers: &mut VecDeque<i32>) -> Tree<i32> {
@@ -56,13 +55,13 @@ fn parse_node(numbers: &mut VecDeque<i32>) -> Tree<i32> {
         .map(|_| numbers.pop_front().unwrap())
         .collect();
 
-    return Tree::Node(Box::new(metadata), Box::new(children));
+    Tree::Node(metadata, children)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::*;
+    use crate::common::*;
 
     #[test]
     fn it_parses_line_into_tree() {

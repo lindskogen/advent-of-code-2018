@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use regex::Regex;
 
 use std::collections::HashMap;
@@ -15,20 +14,20 @@ pub enum GuardEvent {
     BeginShift(u32),
 }
 
-pub fn solve1(mut lines: Vec<Event>) -> u32 {
-    let mut calendar: HashMap<u32, HashMap<u32, u32>> = populate_calendar(lines);
+pub fn solve1(lines: Vec<Event>) -> u32 {
+    let calendar: HashMap<u32, HashMap<u32, u32>> = populate_calendar(lines);
 
     let (&sleepiest_guard, sleepiest_minutes) = calendar
         .iter()
-        .max_by_key(|&(&k, v)| v.values().sum::<u32>())
+        .max_by_key(|&(_, v)| v.values().sum::<u32>())
         .unwrap();
 
-    let (&index, sleeps) = sleepiest_minutes
+    let (&index, _sleeps) = sleepiest_minutes
         .iter()
-        .max_by_key(|&(index, no_of_sleeps_of_minute)| no_of_sleeps_of_minute)
+        .max_by_key(|&(_, no_of_sleeps_of_minute)| no_of_sleeps_of_minute)
         .unwrap();
 
-    return sleepiest_guard * index;
+    sleepiest_guard * index
 }
 
 fn populate_calendar(mut lines: Vec<Event>) -> HashMap<u32, HashMap<u32, u32>> {
@@ -61,8 +60,8 @@ fn populate_calendar(mut lines: Vec<Event>) -> HashMap<u32, HashMap<u32, u32>> {
     calendar
 }
 
-fn sort_lines(lines: &mut Vec<Event>) {
-    lines.sort_by(|(t1, _), (t2, _)| t1.cmp(&t2))
+fn sort_lines(lines: &mut [Event]) {
+    lines.sort_by(|(t1, _), (t2, _)| t1.cmp(t2))
 }
 
 fn parse_line(line: &str) -> Event {
@@ -95,26 +94,26 @@ fn parse_event(line: &str) -> GuardEvent {
     }
 }
 
-pub fn solve2(mut lines: Vec<Event>) -> u32 {
-    let mut calendar: HashMap<u32, HashMap<u32, u32>> = populate_calendar(lines);
+pub fn solve2(lines: Vec<Event>) -> u32 {
+    let calendar: HashMap<u32, HashMap<u32, u32>> = populate_calendar(lines);
 
     let (&sleepiest_guard, sleepiest_minutes) = calendar
         .iter()
-        .max_by_key(|&(&k, v)| v.values().max().unwrap())
+        .max_by_key(|&(_, v)| v.values().max().unwrap())
         .unwrap();
 
-    let (&index, sleeps) = sleepiest_minutes
+    let (&index, _sleeps) = sleepiest_minutes
         .iter()
-        .max_by_key(|&(index, no_of_sleeps_of_minute)| no_of_sleeps_of_minute)
+        .max_by_key(|&(_, no_of_sleeps_of_minute)| no_of_sleeps_of_minute)
         .unwrap();
 
-    return sleepiest_guard * index;
+    sleepiest_guard * index
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::*;
+    use crate::common::*;
 
     #[test]
     fn it_parses_wake_up() {
@@ -158,7 +157,7 @@ mod tests {
             ((11, 1, 0, 25), GuardEvent::WakeUp),
             ((11, 3, 0, 29), GuardEvent::WakeUp),
             ((11, 2, 0, 50), GuardEvent::WakeUp),
-            ((11, 4, 0, 02), GuardEvent::BeginShift(99)),
+            ((11, 4, 0,  2), GuardEvent::BeginShift(99)),
             ((11, 5, 0, 55), GuardEvent::WakeUp),
             ((11, 5, 0, 3), GuardEvent::BeginShift(99)),
             ((11, 1, 0, 0), GuardEvent::BeginShift(10)),
@@ -186,7 +185,7 @@ mod tests {
                 ((11, 3, 0, 5), GuardEvent::BeginShift(10)),
                 ((11, 3, 0, 24), GuardEvent::FallAsleep),
                 ((11, 3, 0, 29), GuardEvent::WakeUp),
-                ((11, 4, 0, 02), GuardEvent::BeginShift(99)),
+                ((11, 4, 0,  2), GuardEvent::BeginShift(99)),
                 ((11, 4, 0, 36), GuardEvent::FallAsleep),
                 ((11, 4, 0, 46), GuardEvent::WakeUp),
                 ((11, 5, 0, 3), GuardEvent::BeginShift(99)),
@@ -206,7 +205,7 @@ mod tests {
             ((11, 1, 0, 25), GuardEvent::WakeUp),
             ((11, 3, 0, 29), GuardEvent::WakeUp),
             ((11, 2, 0, 50), GuardEvent::WakeUp),
-            ((11, 4, 0, 02), GuardEvent::BeginShift(99)),
+            ((11, 4, 0,  2), GuardEvent::BeginShift(99)),
             ((11, 5, 0, 55), GuardEvent::WakeUp),
             ((11, 5, 0, 3), GuardEvent::BeginShift(99)),
             ((11, 1, 0, 0), GuardEvent::BeginShift(10)),
@@ -227,7 +226,7 @@ mod tests {
     fn it_finds_sleeping_minutes_for_input() {
         let strings = map_lines_to_strings("./src/day4/input");
 
-        let list = strings.iter().map(|s| parse_line(&s)).collect();
+        let list = strings.iter().map(|s| parse_line(s)).collect();
 
         let res = solve1(list);
 
@@ -244,7 +243,7 @@ mod tests {
             ((11, 1, 0, 25), GuardEvent::WakeUp),
             ((11, 3, 0, 29), GuardEvent::WakeUp),
             ((11, 2, 0, 50), GuardEvent::WakeUp),
-            ((11, 4, 0, 02), GuardEvent::BeginShift(99)),
+            ((11, 4, 0,  2), GuardEvent::BeginShift(99)),
             ((11, 5, 0, 55), GuardEvent::WakeUp),
             ((11, 5, 0, 3), GuardEvent::BeginShift(99)),
             ((11, 1, 0, 0), GuardEvent::BeginShift(10)),
@@ -265,7 +264,7 @@ mod tests {
     fn it_finds_sleeping_minute_for_input_star2() {
         let strings = map_lines_to_strings("./src/day4/input");
 
-        let list = strings.iter().map(|s| parse_line(&s)).collect();
+        let list = strings.iter().map(|s| parse_line(s)).collect();
 
         let res = solve2(list);
 

@@ -1,8 +1,9 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
-use std::str::FromStr;
 
-pub fn solve1(claims: Vec<(u32, (u32, u32), (u32, u32))>) -> u32 {
+type Coord = (u32, u32);
+
+pub fn solve1(claims: Vec<(u32, Coord, Coord)>) -> u32 {
     let grid = fill_grid(&claims);
 
     grid.values()
@@ -10,10 +11,10 @@ pub fn solve1(claims: Vec<(u32, (u32, u32), (u32, u32))>) -> u32 {
         .sum()
 }
 
-pub fn solve2(claims: Vec<(u32, (u32, u32), (u32, u32))>) -> u32 {
+pub fn solve2(claims: Vec<(u32, Coord, Coord)>) -> u32 {
     let grid = fill_grid(&claims);
 
-    let (max_id, _, _) = *claims.iter().max_by_key(|(id, pos, size)| *id).unwrap();
+    let (max_id, _, _) = *claims.iter().max_by_key(|(id, _, _)| *id).unwrap();
 
     let mut set: HashSet<u32> = (1..=max_id).collect();
 
@@ -25,13 +26,13 @@ pub fn solve2(claims: Vec<(u32, (u32, u32), (u32, u32))>) -> u32 {
         }
     }
 
-    set.into_iter().nth(0).unwrap()
+    set.into_iter().next().unwrap()
 }
 
-fn fill_grid(claims: &Vec<(u32, (u32, u32), (u32, u32))>) -> HashMap<(u32, u32), Vec<u32>> {
-    let mut grid: HashMap<(u32, u32), Vec<u32>> = HashMap::new();
+fn fill_grid(claims: &[(u32, Coord, Coord)]) -> HashMap<Coord, Vec<u32>> {
+    let mut grid: HashMap<_, _> = HashMap::new();
 
-    for &(id, (x, y), (w, h)) in claims.iter() {
+    for &(id, (x, y), (w, h)) in claims {
         for i in x..(x + w) {
             for j in y..(y + h) {
                 grid.entry((i, j)).or_insert(vec![]).push(id);
@@ -42,7 +43,7 @@ fn fill_grid(claims: &Vec<(u32, (u32, u32), (u32, u32))>) -> HashMap<(u32, u32),
     grid
 }
 
-fn debug_print_map(grid: &HashMap<(u32, u32), Vec<u32>>) {
+fn debug_print_map(grid: &HashMap<Coord, Vec<u32>>) {
     for i in 0..=8 {
         for j in 0..=7 {
             match grid.get(&(j, i)) {
@@ -60,10 +61,9 @@ fn debug_print_map(grid: &HashMap<(u32, u32), Vec<u32>>) {
 
 fn parse_line(line: &str) -> (u32, (u32, u32), (u32, u32)) {
     let splits: Vec<_> = line
-        .split(|c| c == '#' || c == '@' || c == ',' || c == ':' || c == 'x')
-        .filter(|&c| c != "")
-        .map(|s| u32::from_str(s.trim()))
-        .flatten()
+        .split(&['#', '@', ',', ':', 'x'])
+        .filter(|&c| !c.is_empty())
+        .flat_map(|s| s.trim().parse())
         .collect();
 
     (splits[0], (splits[1], splits[2]), (splits[3], splits[4]))
@@ -72,7 +72,7 @@ fn parse_line(line: &str) -> (u32, (u32, u32), (u32, u32)) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::*;
+    use crate::common::*;
 
     #[test]
     fn it_returns_num_of_overlapping_claims() {

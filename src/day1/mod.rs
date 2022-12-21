@@ -1,10 +1,10 @@
 use std::collections::HashSet;
 
-pub fn solve1(numbers: &Vec<i32>) -> i32 {
+pub fn solve1(numbers: &[i32]) -> i32 {
     numbers.iter().sum()
 }
 
-pub fn solve2(numbers: &Vec<i32>) -> i32 {
+pub fn solve2(numbers: &[i32]) -> i32 {
     let mut map_of_counts: HashSet<i32> = HashSet::new();
     map_of_counts.insert(0);
     let mut sum = 0;
@@ -14,41 +14,41 @@ pub fn solve2(numbers: &Vec<i32>) -> i32 {
             return sum;
         }
     }
-    panic!("numbers.cycle() ended?");
+    unreachable!()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use common::*;
+    use crate::common::*;
 
     #[test]
     fn it_sums_the_array() {
-        let result: i32 = solve1(&vec![1, 2, 3]);
+        let result: i32 = solve1(&[1, 2, 3]);
         assert_eq!(result, 1 + 2 + 3)
     }
 
     #[test]
     fn it_handles_example_input_1() {
-        let result: i32 = solve1(&vec![1, 1, 1]);
+        let result: i32 = solve1(&[1, 1, 1]);
         assert_eq!(result, 3)
     }
 
     #[test]
     fn it_handles_example_input_2() {
-        let result: i32 = solve1(&vec![1, 1, -2]);
+        let result: i32 = solve1(&[1, 1, -2]);
         assert_eq!(result, 0)
     }
 
     #[test]
     fn it_handles_example_input_3() {
-        let result: i32 = solve1(&vec![-1, -2, -3]);
+        let result: i32 = solve1(&[-1, -2, -3]);
         assert_eq!(result, -6)
     }
 
     #[test]
     fn it_handles_example_input_4() {
-        let result: i32 = solve1(&vec![1, -2, 3, 1]);
+        let result: i32 = solve1(&[1, -2, 3, 1]);
         assert_eq!(result, 3)
     }
 
@@ -61,7 +61,7 @@ mod tests {
 
     #[test]
     fn it_handles_example_input_4_star_2() {
-        let result: i32 = solve2(&vec![1, -2, 3, 1]);
+        let result: i32 = solve2(&[1, -2, 3, 1]);
         assert_eq!(result, 2)
     }
 
